@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>{{ post.title }}</h3>
+<p><i>Published on {{ post.pub_date }}</i></p>
+<p>{{ post.content|linebreaks }}</p>
+<br>
+<a class="anchor-color" href="{% url 'post_list' %}">Back to post list</a>
+<hr>
+
+<h3>{{ post.likes }} Likes </h3>
+<div class="button-container">
+    <form method="post" action="{% url 'like' post.pk %}">
+        {% csrf_token %}
+        <button class="button-color anchor-color" type="submit" name="like">Like</button>
+    </form>
+        <button class="button-color anchor-color" type="button" name="Share" data-bs-toggle="modal" data-bs-target="#exampleModal"
+        data-bs-whatever="@mdo">Share</button>
+
+</div>
+<div class="message-color">
+    {% if messages %}
+        {% for message in messages %}
+           <p class="{{ message.tags }}">{{message}}</p>
+        {% endfor %}
+    {% endif %}
+</div>
+<br>
+<hr>
+
+
+<h3>Add a Comment</h3>
+<form method="post">
+    {% csrf_token %}
+    <label for="text">Comment:</label>
+    <textarea id="text" name="text"></textarea>
+    <br><br>
+    <button class="button-color anchor-color" type="submit">Submit</button>
+</form>
+<br>
+<hr>
+<!-- Display existing comments -->
+<h3>{{ post.total_comments}} Comments</h3>
+<ul>
+    {% for comment in comments %}
+        <li>
+            <p>Comment by <b>{{ comment.name }}</b> at {{ comment.created_date }}</p>
+            <p><b>{{ comment.text }}</b></p>
+            <P>{{ comment.likes }} likes </P>
+            <form action="{% url 'comment_like' comment.id %}" method="post">
+              {% csrf_token %}
+            <button class="button-color">Like it</button>
+                </form>
+            <hr>
+        </li>
+    {% endfor %}
+</ul>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'share' post.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Recipient:</label>
+                            <input type="text" class="form-control" id="recipient-name" name="recipient" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Message:</label>
+                            <textarea class="form-control" id="message-text" name="message" required></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="button-color anchor-color" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="button-color anchor-color">Send message</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

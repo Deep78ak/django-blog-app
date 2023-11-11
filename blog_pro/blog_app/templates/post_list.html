@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<ul>
+    {% for post in posts %}
+        <li>
+            <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
+            <p><i>Published on {{ post.pub_date }}</i></p>
+            {% if post.content|length > 50 %}
+                <p>{{ post.content|slice:":50" }}....</p>
+            {% else %}
+            <p>{{ post.content }}</p>
+            {% endif %}
+            <p><span><b>Total comment:</b> {{ post.comment_count }}</span>&nbsp; &nbsp; &nbsp;<span><b>Total Likes:</b> {{ post.likes }}</span></p>
+            <br>
+            <hr>
+        </li>
+    {% endfor %}
+</ul>
+
+<div class="pagination">
+    <span class="step-links ">
+        {% if posts.has_previous %}
+            <a class="anchor-color button-color" href="?page=1">First</a>
+            <a class="anchor-color button-color" href="?page={{ posts.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current-page">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}
+        </span>
+
+        {% if posts.has_next %}
+            <a class="anchor-color button-color" href="?page={{ posts.next_page_number }}">Next</a>
+            <a class="anchor-color button-color" href="?page={{ posts.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
